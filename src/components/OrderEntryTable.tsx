@@ -1,6 +1,6 @@
 import { createSignal, createEffect } from "solid-js";
 import { retailers, orderStatuses } from "../constants/index.ts";
-import PaymentTypeInput from "./PaymentTypeInput.tsx";
+import DealTypeInput from "./DealTypeInput.tsx";
 import {
   RetailerSelect,
   CreditCardSelect,
@@ -9,7 +9,7 @@ import {
 import {
   creditCards,
   type OrderEntry,
-  type PaymentType,
+  type DealType,
   type OrderStatus,
 } from "../constants/index.ts";
 
@@ -19,10 +19,10 @@ export default function OrderEntryTable() {
     retailer: retailers[0],
     orderNumber: "",
     email: "",
-    product: "",
+    itemsPurchased: "",
     quantity: 1,
     cost: 0,
-    paymentType: "atCost" as PaymentType,
+    paymentType: "atCost" as DealType,
     paymentAdjustment: 0,
     creditCard: creditCards[0].name,
     cashback: 0,
@@ -57,159 +57,205 @@ export default function OrderEntryTable() {
   });
 
   return (
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <label class="block text-sm font-medium mb-2">Order Date</label>
-        <input
-          type="date"
-          value={entry().orderDate}
-          onChange={(e) =>
-            setEntry((prev) => ({ ...prev, orderDate: e.currentTarget.value }))
-          }
-          class="w-full rounded border p-2"
-        />
-      </div>
+    <div class="overflow-x-auto">
+      <table class="w-full border border-collapse border-gray-200 table-auto">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="px-4 py-2 border border-gray-300">Order Date</th>
+            <th class="px-4 py-2 border border-gray-300">Retailer</th>
+            <th class="px-4 py-2 border border-gray-300">Order Number</th>
+            <th class="px-4 py-2 border border-gray-300">Email</th>
+            <th class="px-4 py-2 border border-gray-300">Items Purchased</th>
+            <th class="px-4 py-2 border border-gray-300">Quantity</th>
+            <th class="px-4 py-2 border border-gray-300">Cost</th>
+            <th class="px-4 py-2 border border-gray-300">Deal Type</th>
+            <th class="px-4 py-2 border border-gray-300">Credit Card Used</th>
+            <th class="px-4 py-2 border border-gray-300">Cashback</th>
+            <th class="px-4 py-2 border border-gray-300">Rebate</th>
+            <th class="px-4 py-2 border border-gray-300">Tracking Number</th>
+            <th class="px-4 py-2 border border-gray-300">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            {/* Order Date */}
+            <td class="px-4 py-2 border">
+              <input
+                type="date"
+                value={entry().orderDate}
+                onChange={(e) =>
+                  setEntry((prev) => ({
+                    ...prev,
+                    orderDate: e.currentTarget.value,
+                  }))
+                }
+                class="w-full p-2"
+              />
+            </td>
 
-      <RetailerSelect
-        value={entry().retailer}
-        onChange={(value) => setEntry((prev) => ({ ...prev, retailer: value }))}
-        label="Retailer"
-      />
+            {/* Order Name */}
+            <td class="px-4 py-2 border">
+              <input
+                type="text"
+                value={entry().orderNumber}
+                onChange={(e) =>
+                  setEntry((prev) => ({
+                    ...prev,
+                    orderNumber: e.currentTarget.value,
+                  }))
+                }
+                class="w-full p-2"
+              />
+            </td>
 
-      <div>
-        <label class="block text-sm font-medium mb-2">Order Number</label>
-        <input
-          type="text"
-          value={entry().orderNumber}
-          onChange={(e) =>
-            setEntry((prev) => ({
-              ...prev,
-              orderNumber: e.currentTarget.value,
-            }))
-          }
-          class="w-full rounded border p-2"
-        />
-      </div>
+            {/* Email */}
+            <td class="px-4 py-2 border">
+              <input
+                type="email"
+                value={entry().email}
+                onChange={(e) =>
+                  setEntry((prev) => ({
+                    ...prev,
+                    email: e.currentTarget.value,
+                  }))
+                }
+                class="w-full p-2"
+              />
+            </td>
 
-      <div>
-        <label class="block text-sm font-medium mb-2">Email</label>
-        <input
-          type="email"
-          value={entry().email}
-          onChange={(e) =>
-            setEntry((prev) => ({ ...prev, email: e.currentTarget.value }))
-          }
-          class="w-full rounded border p-2"
-        />
-      </div>
+            {/* Retailer */}
+            <td class="px-4 py-2 border">
+              <RetailerSelect
+                value={entry().retailer}
+                onChange={(value) =>
+                  setEntry((prev) => ({ ...prev, retailer: value }))
+                }
+                label=""
+              />
+            </td>
 
-      <div>
-        <label class="block text-sm font-medium mb-2">Product</label>
-        <input
-          type="text"
-          value={entry().product}
-          onChange={(e) =>
-            setEntry((prev) => ({ ...prev, product: e.currentTarget.value }))
-          }
-          class="w-full rounded border p-2"
-        />
-      </div>
+            {/* Items Purchased */}
+            <td class="px-4 py-2 border">
+              <input
+                type="text"
+                value={entry().itemsPurchased}
+                onChange={(e) =>
+                  setEntry((prev) => ({
+                    ...prev,
+                    itemsPurchased: e.currentTarget.value,
+                  }))
+                }
+                class="w-full p-2"
+              />
+            </td>
 
-      <div>
-        <label class="block text-sm font-medium mb-2">Quantity</label>
-        <input
-          type="number"
-          min="1"
-          step="1"
-          value={entry().quantity}
-          onChange={(e) =>
-            setEntry((prev) => ({
-              ...prev,
-              quantity: parseInt(e.currentTarget.value),
-            }))
-          }
-          class="w-full rounded border p-2"
-        />
-      </div>
+            {/* Quantity */}
+            <td class="px-4 py-2 border">
+              <input
+                type="number"
+                min="1"
+                step="1"
+                value={entry().quantity}
+                onChange={(e) =>
+                  setEntry((prev) => ({
+                    ...prev,
+                    quantity: parseInt(e.currentTarget.value),
+                  }))
+                }
+                class="w-full p-2"
+              />
+            </td>
 
-      <div>
-        <label class="block text-sm font-medium mb-2">Cost (USD)</label>
-        <input
-          type="number"
-          min="0"
-          step="0.01"
-          value={entry().cost}
-          onChange={(e) =>
-            setEntry((prev) => ({
-              ...prev,
-              cost: parseFloat(e.currentTarget.value),
-            }))
-          }
-          class="w-full rounded border p-2"
-        />
-      </div>
+            {/* Cost */}
+            <td class="px-4 py-2 border">
+              <input
+                type="number"
+                min="0"
+                step="0.01"
+                value={entry().cost}
+                onChange={(e) =>
+                  setEntry((prev) => ({
+                    ...prev,
+                    cost: parseFloat(e.currentTarget.value),
+                  }))
+                }
+                class="w-full p-2"
+              />
+            </td>
 
-      <PaymentTypeInput
-        value={entry().paymentType}
-        adjustment={entry().paymentAdjustment}
-        onTypeChange={(type: PaymentType) =>
-          setEntry((prev) => ({ ...prev, paymentType: type }))
-        }
-        onAdjustmentChange={(value: number) =>
-          setEntry((prev) => ({ ...prev, paymentAdjustment: value }))
-        }
-      />
+            {/* Deal Type */}
+            <td class="px-4 py-2 border">
+              <DealTypeInput
+                value={entry().paymentType}
+                adjustment={entry().paymentAdjustment}
+                onTypeChange={(type: DealType) =>
+                  setEntry((prev) => ({ ...prev, paymentType: type }))
+                }
+                onAdjustmentChange={(value: number) =>
+                  setEntry((prev) => ({ ...prev, paymentAdjustment: value }))
+                }
+              />
+            </td>
 
-      <CreditCardSelect
-        value={entry().creditCard}
-        onChange={(value) =>
-          setEntry((prev) => ({ ...prev, creditCard: value }))
-        }
-        label="Credit Card"
-      />
+            {/* Credit Card Selection */}
+            <td class="px-4 py-2 border">
+              <CreditCardSelect
+                value={entry().creditCard}
+                onChange={(value) =>
+                  setEntry((prev) => ({ ...prev, creditCard: value }))
+                }
+                label="Credit Card"
+              />
+            </td>
 
-      <div>
-        <label class="block text-sm font-medium mb-2">Cashback (USD)</label>
-        <input
-          type="number"
-          value={entry().cashback}
-          readonly
-          class="w-full rounded border p-2 bg-gray-100"
-        />
-      </div>
+            {/* Cashback Amount */}
+            <td class="px-4 py-2 border">
+              <input
+                type="number"
+                value={entry().cashback}
+                readonly
+                class="w-full rounded border p-2 bg-gray-100"
+              />
+            </td>
 
-      <div>
-        <label class="block text-sm font-medium mb-2">Rebate (USD)</label>
-        <input
-          type="number"
-          value={entry().rebate}
-          readonly
-          class="w-full rounded border p-2 bg-gray-100"
-        />
-      </div>
+            {/* Rebate Amount */}
+            <td class="px-4 py-2 border">
+              <input
+                type="number"
+                value={entry().rebate}
+                readonly
+                class="w-full rounded border p-2 bg-gray-100"
+              />
+            </td>
 
-      <div>
-        <label class="block text-sm font-medium mb-2">Tracking Number</label>
-        <input
-          type="text"
-          value={entry().trackingNumber}
-          onChange={(e) =>
-            setEntry((prev) => ({
-              ...prev,
-              trackingNumber: e.currentTarget.value,
-            }))
-          }
-          class="w-full rounded border p-2"
-        />
-      </div>
+            {/* Tracking Number */}
+            <td class="px-4 py-2 border">
+              <input
+                type="text"
+                value={entry().trackingNumber}
+                onChange={(e) =>
+                  setEntry((prev) => ({
+                    ...prev,
+                    trackingNumber: e.currentTarget.value,
+                  }))
+                }
+                class="w-full p-2"
+              />
+            </td>
 
-      <StatusSelect
-        value={entry().status}
-        onChange={(value: OrderStatus) =>
-          setEntry((prev) => ({ ...prev, status: value }))
-        }
-        label="Status"
-      />
+            {/* Status */}
+            <td class="px-4 py-2 border">
+              <StatusSelect
+                value={entry().status}
+                onChange={(value: OrderStatus) =>
+                  setEntry((prev) => ({ ...prev, status: value }))
+                }
+                label="Status"
+              />
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   );
 }

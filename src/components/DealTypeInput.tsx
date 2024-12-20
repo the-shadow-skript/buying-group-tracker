@@ -1,14 +1,14 @@
 import { Show } from "solid-js";
-import type { PaymentType } from "../constants/index.ts";
+import type { DealType } from "../constants/index.ts";
 
 interface Props {
-  value: PaymentType;
+  value: DealType;
   adjustment: number;
-  onTypeChange: (type: PaymentType) => void;
+  onTypeChange: (type: DealType) => void;
   onAdjustmentChange: (value: number) => void;
 }
 
-export default function PaymentTypeInput(_props: Props) {
+export default function DealTypeInput(_props: Props) {
   return (
     <div class="space-y-4">
       <div class="space-y-2">
@@ -18,7 +18,7 @@ export default function PaymentTypeInput(_props: Props) {
             value="atCost"
             checked={_props.value === "atCost"}
             onChange={(e) =>
-              _props.onTypeChange(e.currentTarget.value as PaymentType)
+              _props.onTypeChange(e.currentTarget.value as DealType)
             }
             class="mr-2"
           />
@@ -30,7 +30,7 @@ export default function PaymentTypeInput(_props: Props) {
             value="belowCost"
             checked={_props.value === "belowCost"}
             onChange={(e) =>
-              _props.onTypeChange(e.currentTarget.value as PaymentType)
+              _props.onTypeChange(e.currentTarget.value as DealType)
             }
             class="mr-2"
           />
