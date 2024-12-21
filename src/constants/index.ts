@@ -1,5 +1,5 @@
 export type DealType = "atCost" | "belowCost";
-export type OrderStatus = "order" | "shipped" | "received" | "paid";
+export type OrderStatus = "Order" | "Shipped" | "Received" | "Paid";
 
 export const retailers = ["Amazon", "Best Buy", "Walmart"];
 
@@ -10,21 +10,21 @@ export const creditCards = [
 ] as const;
 
 export const orderStatuses: OrderStatus[] = [
-  "order",
-  "shipped",
-  "received",
-  "paid",
+  "Order",
+  "Shipped",
+  "Received",
+  "Paid",
 ];
 
 export interface OrderEntry {
   orderDate: string;
-  retailer: string;
   orderNumber: string;
   email: string;
+  retailer: string;
   itemsPurchased: string;
   quantity: number;
   cost: number;
-  paymentType: DealType;
+  dealType: DealType;
   paymentAdjustment: number;
   creditCard: string;
   cashback: number;
