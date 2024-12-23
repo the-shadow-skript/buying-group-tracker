@@ -1,12 +1,20 @@
 import { createSignal } from "solid-js";
-import { retailers, creditCards, orderStatuses } from "../constants/index.ts";
-import type { OrderEntry, DealType, OrderStatus } from "../constants/index.ts";
+import DealTypeInput from "./DealTypeInput.tsx";
 import {
+  BuyingGroupSelect,
   RetailerSelect,
   CreditCardSelect,
   StatusSelect,
 } from "./SelectInputs.tsx";
-import DealTypeInput from "./DealTypeInput.tsx";
+import {
+  buyingGroup,
+  retailer,
+  creditCard,
+  orderStatus,
+  type OrderEntry,
+  type DealType,
+  type OrderStatus,
+} from "../constants/index.ts";
 
 interface OrderEntryFormProps {
   onAddEntry: (entry: OrderEntry) => void;
@@ -14,42 +22,39 @@ interface OrderEntryFormProps {
 
 export default function OrderEntryForm(_props: OrderEntryFormProps) {
   const [formData, setFormData] = createSignal<OrderEntry>({
+    buyingGroup: buyingGroup[0],
     orderDate: new Date().toISOString().split("T")[0],
     orderNumber: "",
     email: "",
-    retailer: retailers[0],
+    retailer: retailer[0],
     itemsPurchased: "",
     quantity: 1,
     cost: 0,
     dealType: "atCost",
     paymentAdjustment: 0,
-    creditCard: creditCards[0].name,
+    creditCard: creditCard[0].name,
     cashback: 0,
     rebate: 0,
-    trackingNumber: "",
-    status: orderStatuses[0],
+    status: orderStatus[0],
   });
 
+  const [costInput, setCostInput] = createSignal("");
+
   const calculateCashbackAndRebate = (data: OrderEntry): OrderEntry => {
-    const selectedCard = creditCards.find(
+    const selectedCard = creditCard.find(
       (card) => card.name === data.creditCard
     );
     const cashbackRate = selectedCard?.cashbackRate || 0;
-
-    let finalCost = data.cost;
-    if (data.dealType === "atCost") {
-      finalCost += data.paymentAdjustment;
-    } else {
-      finalCost += 1 - data.paymentAdjustment / 100;
-    }
+    const cashback = Number((data.cost * cashbackRate).toFixed(2));
+    const rebate =
+      data.dealType === "belowCost"
+        ? Number((data.cost * (data.paymentAdjustment / 100)).toFixed(2))
+        : 0;
 
     return {
       ...data,
-      cashback: Number((finalCost * cashbackRate).toFixed(2)),
-      rebate:
-        data.dealType === "belowCost"
-          ? Number((data.cost * (data.paymentAdjustment / 100)).toFixed(2))
-          : 0,
+      cashback,
+      rebate,
     };
   };
 
@@ -59,27 +64,38 @@ export default function OrderEntryForm(_props: OrderEntryFormProps) {
     _props.onAddEntry(updatedData);
 
     setFormData({
+      buyingGroup: buyingGroup[0],
       orderDate: new Date().toISOString().split("T")[0],
       orderNumber: "",
       email: "",
-      retailer: retailers[0],
+      retailer: retailer[0],
       itemsPurchased: "",
       quantity: 1,
       cost: 0,
       dealType: "atCost",
       paymentAdjustment: 0,
-      creditCard: creditCards[0].name,
+      creditCard: creditCard[0].name,
       cashback: 0,
       rebate: 0,
-      trackingNumber: "",
-      status: orderStatuses[0],
+      status: orderStatus[0],
     });
   };
 
   return (
     <form onSubmit={handleSubmit} class="space-y-4">
+      {/* Buying Group */}
       <div>
-        {/*Order Date */}
+        <BuyingGroupSelect
+          value={formData().buyingGroup}
+          onChange={(value) =>
+            setFormData((prev) => ({ ...prev, buyingGroup: value }))
+          }
+          label="Buying Group"
+        />
+      </div>
+
+      {/*Order Date */}
+      <div>
         <label class="block mb-1 text-sm font-medium">Order Date</label>
         <input
           type="date"
@@ -175,15 +191,36 @@ export default function OrderEntryForm(_props: OrderEntryFormProps) {
         <label class="block mb-1 text-sm font-medium">Cost</label>
         <input
           type="number"
-          min="0"
-          value={formData().cost}
-          onInput={(e) =>
+          step="0.01"
+          value={costInput()}
+          onInput={(e) => {
+            const input = e.currentTarget.value;
+            if (input === "" || /^\d*\.?\d*$/.test(input)) {
+              setCostInput(input);
+              if (input) {
+                setFormData({
+                  ...formData(),
+                  cost: parseFloat(input) || 0,
+                });
+              } else {
+                setFormData({
+                  ...formData(),
+                  cost: 0,
+                });
+              }
+            }
+          }}
+          onBlur={(e) => {
+            const value = parseFloat(e.currentTarget.value || "0");
+            const formatted = isNaN(value) ? "0.00" : value.toFixed(2);
+            setCostInput(formatted);
             setFormData({
               ...formData(),
-              cost: +(e.target as HTMLInputElement).value,
-            })
-          }
+              cost: parseFloat(formatted),
+            });
+          }}
           class="w-full p-2 border rounded"
+          placeholder="0.00"
         />
       </div>
 
@@ -205,26 +242,10 @@ export default function OrderEntryForm(_props: OrderEntryFormProps) {
       <CreditCardSelect
         value={formData().creditCard}
         onChange={(value) =>
-          setFormData((prev) => ({ ...prev, credit: value }))
+          setFormData((prev) => ({ ...prev, creditCard: value }))
         }
         label="Credit Card"
       />
-
-      {/* Tracking Number */}
-      <div>
-        <label class="block mb-1 text-sm font-medium">Tracking Number</label>
-        <input
-          type="text"
-          value={formData().trackingNumber}
-          onInput={(e) =>
-            setFormData((prev) => ({
-              ...prev,
-              trackingNumber: (e.target as HTMLInputElement).value,
-            }))
-          }
-          class="w-full p-2 border rounded"
-        />
-      </div>
 
       {/* Status */}
       <div>

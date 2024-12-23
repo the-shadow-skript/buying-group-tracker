@@ -1,5 +1,5 @@
 import "./App.css";
-import { createSignal } from "solid-js";
+import { createSignal, onMount } from "solid-js";
 import type { OrderEntry } from "./constants/index.ts";
 import OrderEntryTable from "./components/OrderEntryTable.tsx";
 import OrderEntryForm from "./components/OrderEntryForm.tsx";
@@ -7,8 +7,17 @@ import OrderEntryForm from "./components/OrderEntryForm.tsx";
 export default function App() {
   const [entries, setEntries] = createSignal<OrderEntry[]>([]);
 
+  onMount(() => {
+    const savedEntries = localStorage.getItem("orderEntries");
+    if (savedEntries) {
+      setEntries(JSON.parse(savedEntries));
+    }
+  });
+
   const handleAddEntry = (entry: OrderEntry) => {
-    setEntries([...entries(), entry]);
+    const updatedEntries = [...entries(), entry];
+    setEntries(updatedEntries);
+    localStorage.setItem("orderEntries", JSON.stringify(updatedEntries));
   };
 
   return (
@@ -25,9 +34,24 @@ export default function App() {
           <h2 class="mb-4 text-xl font-semibold">Totals</h2>
           <div class="p-4 bg-white border rounded shadow-sm">
             <p>Total Orders: {entries().length}</p>
-            <p>Total Cost: ${entries().reduce((sum, entry) => sum + entry.cost, 0).toFixed(2)}</p>
-            <p>Total Cashback: ${entries().reduce((sum, entry) => sum + entry.cashback, 0).toFixed(2)}</p>
-            <p>Total Rebates: ${entries().reduce((sum, entry) => sum + entry.rebate, 0).toFixed(2)}</p>
+            <p>
+              Total Cost: $
+              {entries()
+                .reduce((sum, entry) => sum + entry.cost, 0)
+                .toFixed(2)}
+            </p>
+            <p>
+              Total Cashback: $
+              {entries()
+                .reduce((sum, entry) => sum + entry.cashback, 0)
+                .toFixed(2)}
+            </p>
+            <p>
+              Total Rebates: $
+              {entries()
+                .reduce((sum, entry) => sum + entry.rebate, 0)
+                .toFixed(2)}
+            </p>
           </div>
         </div>
       </div>

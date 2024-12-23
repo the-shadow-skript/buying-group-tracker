@@ -41,17 +41,18 @@ export default function DealTypeInput(_props: Props) {
       <Show when={_props.value === "atCost"}>
         <div>
           <label class="block text-sm font-medium mb-2">
-            Commission Amount (USD)
+            Commission Amount ($)
           </label>
           <input
             type="number"
             min="0"
             step="0.01"
-            value={_props.adjustment}
+            value={_props.adjustment.toFixed(2)}
             onChange={(e) =>
               _props.onAdjustmentChange(parseFloat(e.currentTarget.value))
             }
             class="w-full p-2 rounded-border"
+            placeholder="0.00"
           />
         </div>
       </Show>
@@ -59,18 +60,19 @@ export default function DealTypeInput(_props: Props) {
       <Show when={_props.value === "belowCost"}>
         <div>
           <label class="block text-sm font-medium mb-2">
-            Below Cost Percentage
+            Below Cost Percentage (%)
           </label>
           <input
             type="number"
             min="0"
             max="100"
-            step="0.1"
+            step="0.01"
             value={_props.adjustment}
             onChange={(e) =>
               _props.onAdjustmentChange(parseFloat(e.currentTarget.value))
             }
             class="w-full p-2 border rounded"
+            placeholder="0.00"
           />
         </div>
       </Show>
