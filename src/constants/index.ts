@@ -7,7 +7,7 @@ export type Retailer = (typeof retailer)[number];
 export const dealType = ["atCost", "belowCost"] as const;
 export type DealType = (typeof dealType)[number];
 
-export const orderStatus = ["Order", "Shipped", "Received", "Paid"];
+export const orderStatus = ["Ordered", "Shipped", "Received", "Paid"];
 export type OrderStatus = (typeof orderStatus)[number];
 
 export const creditCardName = [

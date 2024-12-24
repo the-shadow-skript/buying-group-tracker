@@ -11,6 +11,7 @@ interface Props {
 export default function DealTypeInput(_props: Props) {
   return (
     <div class="space-y-4">
+      <label class="block text-sm font-medium">Deal Type</label>
       <div class="space-y-2">
         <label class="flex items-center">
           <input

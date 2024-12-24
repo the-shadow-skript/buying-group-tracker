@@ -4,7 +4,6 @@ import {
   BuyingGroupSelect,
   RetailerSelect,
   CreditCardSelect,
-  StatusSelect,
 } from "./SelectInputs.tsx";
 import {
   buyingGroup,
@@ -13,7 +12,6 @@ import {
   orderStatus,
   type OrderEntry,
   type DealType,
-  type OrderStatus,
 } from "../constants/index.ts";
 
 interface OrderEntryFormProps {
@@ -246,17 +244,6 @@ export default function OrderEntryForm(_props: OrderEntryFormProps) {
         }
         label="Credit Card"
       />
-
-      {/* Status */}
-      <div>
-        <StatusSelect
-          value={formData().status}
-          onChange={(value: OrderStatus) =>
-            setFormData((prev) => ({ ...prev, status: value }))
-          }
-          label="Status"
-        />
-      </div>
 
       <button
         type="submit"

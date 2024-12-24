@@ -1,8 +1,9 @@
-import { For } from "solid-js";
-import { type OrderEntry } from "../constants/index.ts";
+import StatusCell from "./StatusCell.tsx";
+import type { OrderEntry, OrderStatus } from "../constants/index.ts";
 
 interface OrderEntryTableProps {
   entries: OrderEntry[];
+  onStatusUpdate: (index: number, newStatus: OrderStatus) => void;
 }
 
 export default function OrderEntryTable(_props: OrderEntryTableProps) {
@@ -21,44 +22,49 @@ export default function OrderEntryTable(_props: OrderEntryTableProps) {
 
   return (
     <div class="overflow-x-auto">
-      <table class="w-full border border-collapse border-gray-200 table-auto">
-        <thead>
-          <tr class="bg-gray-100">
-            <th class="px-4 py-2 border border-gray-300">Buying Group</th>
-            <th class="px-4 py-2 border border-gray-300">Order Date</th>
-            <th class="px-4 py-2 border border-gray-300">Order Number</th>
-            <th class="px-4 py-2 border border-gray-300">Email</th>
-            <th class="px-4 py-2 border border-gray-300">Retailer</th>
-            <th class="px-4 py-2 border border-gray-300">Items Purchased</th>
-            <th class="px-4 py-2 border border-gray-300">Quantity</th>
-            <th class="px-4 py-2 border border-gray-300">Cost</th>
-            <th class="px-4 py-2 border border-gray-300">Deal Type</th>
-            <th class="px-4 py-2 border border-gray-300">Credit Card Used</th>
-            <th class="px-4 py-2 border border-gray-300">Cashback</th>
-            <th class="px-4 py-2 border border-gray-300">Rebate</th>
-            <th class="px-4 py-2 border border-gray-300">Status</th>
+      <table class="w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="p-4 text-left">Buying Group</th>
+            <th class="p-4 text-left">Order Date</th>
+            <th class="p-4 text-left">Order Number</th>
+            <th class="p-4 text-left">Email</th>
+            <th class="p-4 text-left">Retailer</th>
+            <th class="p-4 text-left">Items Purchased</th>
+            <th class="p-4 text-left">Quantity</th>
+            <th class="p-4 text-left">Cost</th>
+            <th class="p-4 text-left">Deal Type</th>
+            <th class="p-4 text-left">Credit Card Used</th>
+            <th class="p-4 text-left">Cashback</th>
+            <th class="p-4 text-left">Rebate</th>
+            <th class="p-4 text-left">Status</th>
           </tr>
         </thead>
         <tbody>
-          <For each={_props.entries}>
-            {(entry) => (
-              <tr>
-                <td class="px-4 py-2 border">{entry.buyingGroup}</td>
-                <td class="px-4 py-2 border">{entry.orderDate}</td>
-                <td class="px-4 py-2 border">{entry.orderNumber}</td>
-                <td class="px-4 py-2 border">{entry.email}</td>
-                <td class="px-4 py-2 border">{entry.retailer}</td>
-                <td class="px-4 py-2 border">{entry.itemsPurchased}</td>
-                <td class="px-4 py-2 border">{entry.quantity}</td>
-                <td class="px-4 py-2 border">{entry.cost.toFixed(2)}</td>
-                <td class="px-4 py-2 border">{calculateFinalAmount(entry)}</td>
-                <td class="px-4 py-2 border">{entry.creditCard}</td>
-                <td class="px-4 py-2 border">{entry.cashback.toFixed(2)}</td>
-                <td class="px-4 py-2 border">{entry.rebate.toFixed(2)}</td>
-                <td class="px-4 py-2 border">{entry.status}</td>
-              </tr>
-            )}
-          </For>
+          {_props.entries.map((entry, index) => (
+            <tr class="border-t">
+              <td class="p-4">{entry.buyingGroup}</td>
+              <td class="p-4">{entry.orderDate}</td>
+              <td class="p-4">{entry.orderNumber}</td>
+              <td class="p-4">{entry.email}</td>
+              <td class="p-4">{entry.retailer}</td>
+              <td class="p-4">{entry.itemsPurchased}</td>
+              <td class="p-4">{entry.quantity}</td>
+              <td class="p-4">{entry.cost.toFixed(2)}</td>
+              <td class="p-4">{calculateFinalAmount(entry)}</td>
+              <td class="p-4">{entry.creditCard}</td>
+              <td class="p-4">{entry.cashback.toFixed(2)}</td>
+              <td class="p-4">{entry.rebate.toFixed(2)}</td>
+              <td class="p-4">
+                <StatusCell
+                  status={entry.status}
+                  onChange={(newStatus) =>
+                    _props.onStatusUpdate(index, newStatus)
+                  }
+                />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
